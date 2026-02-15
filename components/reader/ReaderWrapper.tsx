@@ -13,7 +13,31 @@ interface ReaderWrapperProps {
 
 export function ReaderWrapper({ book }: ReaderWrapperProps) {
   const [controlsVisible, setControlsVisible] = useState(true);
-  const { theme } = useReaderStore();
+  const { theme, currentChapterId, setCurrentChapterId } = useReaderStore();
+
+  // Initialize current chapter from book if not set or if book changed
+  useEffect(() => {
+    // If store is empty, or we are on a new book, set default chapter
+    // Note: In a real app we might want to track bookId in store too
+    if (!currentChapterId) {
+        // Default to first chapter if available, or the one specified in book
+        const initialChapterId = book.currentChapterId || book.chapters[0]?.id;
+        if (initialChapterId) {
+            setCurrentChapterId(initialChapterId);
+        }
+    } else {
+        // Check if currentChapterId belongs to this book
+        const chapterExists = book.chapters.find(c => c.id === currentChapterId);
+        if (!chapterExists) {
+             const initialChapterId = book.currentChapterId || book.chapters[0]?.id;
+             if (initialChapterId) {
+                 setCurrentChapterId(initialChapterId);
+             }
+        }
+    }
+  }, [book, currentChapterId, setCurrentChapterId]);
+
+  const activeChapter = book.chapters.find(c => c.id === currentChapterId) || book.chapters[0];
 
   // Handle scroll to hide controls
   useEffect(() => {
@@ -38,9 +62,12 @@ export function ReaderWrapper({ book }: ReaderWrapperProps) {
 
   // Handle tap to toggle controls
   const handleTap = () => {
-    // Prevent toggle if clicking on interactive elements (though ReaderContent is mostly text)
-    // But basic tap anywhere on text should toggle
     setControlsVisible((prev) => !prev);
+  };
+
+  const handleChapterSelect = (chapterId: string) => {
+      setCurrentChapterId(chapterId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Background style based on theme
@@ -48,11 +75,15 @@ export function ReaderWrapper({ book }: ReaderWrapperProps) {
 
   return (
     <div className={cn("min-h-screen transition-colors duration-300", bgClass)}>
-      <ReaderControls isVisible={controlsVisible} title={book.title} />
+      <ReaderControls
+        isVisible={controlsVisible}
+        book={book}
+        onChapterSelect={handleChapterSelect}
+      />
 
       {/* Click handler wrapper */}
-      <div onClick={handleTap} className="min-h-screen cursor-pointer">
-        <ReaderContent content={book.content} />
+      <div onClick={handleTap} className="min-h-screen cursor-pointer pt-10">
+        <ReaderContent content={activeChapter?.content || "Content not found."} />
       </div>
     </div>
   );

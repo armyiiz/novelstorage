@@ -22,5 +22,7 @@ export default async function ReaderPage({ params }: PageProps) {
     notFound();
   }
 
+  // Pass the whole book object to the client component
+  // which will handle state for current chapter
   return <ReaderWrapper book={book} />;
 }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Upload, FileText, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { MobileNav } from "@/components/layout/MobileNav";
 
 export default function UploadPage() {
   const [dragActive, setDragActive] = useState(false);
@@ -55,7 +54,7 @@ export default function UploadPage() {
   };
 
   return (
-    <main className="min-h-screen bg-soft-paper pb-24 dark:bg-black">
+    <main className="min-h-screen bg-soft-paper dark:bg-black">
       <div className="mx-auto max-w-2xl px-6 pt-12">
         <h1 className="mb-2 text-2xl font-bold text-midnight-blue dark:text-white">Expand Your Collection.</h1>
         <p className="mb-8 text-slate-600 dark:text-slate-400">Drop your EPUBs here. We&apos;ll handle the rest.</p>
@@ -121,7 +120,6 @@ export default function UploadPage() {
           </div>
         )}
       </div>
-      <MobileNav />
     </main>
   );
 }

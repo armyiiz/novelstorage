@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Sarabun, Noto_Serif_Thai } from "next/font/google";
+import { Navbar } from "@/components/layout/Navbar";
 import "./globals.css";
 
 const sarabun = Sarabun({
@@ -29,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="th" className={`${sarabun.variable} ${notoSerifThai.variable}`}>
       <body className="font-sans antialiased bg-soft-paper text-slate-900 dark:bg-black dark:text-slate-100">
-        {children}
+        <Navbar />
+        <div className="pt-16 md:pt-20 pb-24 md:pb-10">
+          {children}
+        </div>
       </body>
     </html>
   );
