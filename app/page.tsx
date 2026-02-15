@@ -1,7 +1,6 @@
 import { mockBooks } from "@/lib/mockData";
 import { BookCard } from "@/components/ui/BookCard";
 import { HeroSection } from "@/components/ui/HeroSection";
-import { MobileNav } from "@/components/layout/MobileNav";
 
 export default function Home() {
   // Sort by progress descending to find the most recently read (simulated)
@@ -15,7 +14,7 @@ export default function Home() {
   const otherBooks = mockBooks.filter(b => b.id !== latestBook?.id);
 
   return (
-    <main className="min-h-screen bg-soft-paper pb-24 dark:bg-black">
+    <main className="min-h-screen bg-soft-paper dark:bg-black">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <HeroSection latestBook={latestBook} />
 
@@ -32,7 +31,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <MobileNav />
     </main>
   );
 }

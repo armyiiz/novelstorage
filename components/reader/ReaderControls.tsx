@@ -1,21 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { useReaderStore } from "@/store/useReaderStore";
 import { ArrowLeft, Menu } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Book } from "@/lib/mockData";
 
 interface ReaderControlsProps {
   isVisible: boolean;
-  title: string;
+  book: Book;
+  onChapterSelect: (chapterId: string) => void;
 }
 
-export function ReaderControls({ isVisible, title }: ReaderControlsProps) {
+export function ReaderControls({ isVisible, book, onChapterSelect }: ReaderControlsProps) {
   const {
     fontSize, setFontSize,
     theme, setTheme,
-    fontFamily, setFontFamily
+    fontFamily, setFontFamily,
+    currentChapterId
   } = useReaderStore();
+  const [showTOC, setShowTOC] = useState(false);
 
   return (
     <>
@@ -27,11 +32,42 @@ export function ReaderControls({ isVisible, title }: ReaderControlsProps) {
         <Link href="/" className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
           <ArrowLeft className="h-6 w-6" />
         </Link>
-        <h1 className="line-clamp-1 max-w-[60%] text-sm font-semibold text-slate-900 dark:text-white">{title}</h1>
-        <button className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+        <h1 className="line-clamp-1 max-w-[60%] text-sm font-semibold text-slate-900 dark:text-white">{book.title}</h1>
+        <button
+          onClick={() => setShowTOC(true)}
+          className="p-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+        >
           <Menu className="h-6 w-6" />
         </button>
       </div>
+
+      {/* Drawer (Table of Contents Overlay) */}
+      {showTOC && (
+        <div className="fixed inset-0 z-[60] flex justify-end bg-black/50 backdrop-blur-sm" onClick={() => setShowTOC(false)}>
+          <div className="h-full w-3/4 max-w-sm bg-white p-6 shadow-2xl dark:bg-zinc-900" onClick={(e) => e.stopPropagation()}>
+            <h2 className="mb-4 text-xl font-bold text-midnight-blue dark:text-white">สารบัญ</h2>
+            <div className="space-y-2 overflow-y-auto max-h-[80vh]">
+              {book.chapters.map((chapter) => (
+                <button
+                  key={chapter.id}
+                  onClick={() => {
+                    onChapterSelect(chapter.id);
+                    setShowTOC(false);
+                  }}
+                  className={cn(
+                    "w-full text-left p-3 rounded-lg text-sm transition-colors",
+                    (currentChapterId || book.currentChapterId) === chapter.id
+                      ? "bg-bookmark-gold/10 text-bookmark-gold font-semibold"
+                      : "hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-slate-300"
+                  )}
+                >
+                  {chapter.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Bar (Settings) */}
       <div className={cn(
