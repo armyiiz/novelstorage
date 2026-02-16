@@ -15,75 +15,49 @@ export function ReaderWrapper({ book }: ReaderWrapperProps) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const { theme, currentChapterId, setCurrentChapterId } = useReaderStore();
 
-  // Initialize current chapter from book if not set or if book changed
+  // Set initial chapter if not set (default to first chapter)
   useEffect(() => {
-    // If store is empty, or we are on a new book, set default chapter
-    // Note: In a real app we might want to track bookId in store too
-    if (!currentChapterId) {
-        // Default to first chapter if available, or the one specified in book
-        const initialChapterId = book.currentChapterId || book.chapters[0]?.id;
-        if (initialChapterId) {
-            setCurrentChapterId(initialChapterId);
-        }
-    } else {
-        // Check if currentChapterId belongs to this book
-        const chapterExists = book.chapters.find(c => c.id === currentChapterId);
-        if (!chapterExists) {
-             const initialChapterId = book.currentChapterId || book.chapters[0]?.id;
-             if (initialChapterId) {
-                 setCurrentChapterId(initialChapterId);
-             }
-        }
+    // Check if currentChapterId in Store actually exists in this book
+    const chapterExists = book.chapters.find(c => c.id === currentChapterId);
+
+    // If no chapter ID set, OR the ID doesn't exist in this book (e.g. switched books)
+    // then reset to first chapter
+    if (!chapterExists && book.chapters.length > 0) {
+      setCurrentChapterId(book.chapters[0].id);
     }
   }, [book, currentChapterId, setCurrentChapterId]);
 
+  // Find current chapter content
   const activeChapter = book.chapters.find(c => c.id === currentChapterId) || book.chapters[0];
 
   // Handle scroll to hide controls
   useEffect(() => {
     let lastScrollY = window.scrollY;
-
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      // Hide if scrolling down more than 10px and not at top
       if (currentScrollY > lastScrollY + 10 && currentScrollY > 50) {
         setControlsVisible(false);
-      }
-      // Show if scrolling up more than 10px
-      else if (currentScrollY < lastScrollY - 10) {
+      } else if (currentScrollY < lastScrollY - 10) {
         setControlsVisible(true);
       }
       lastScrollY = currentScrollY;
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle tap to toggle controls
   const handleTap = () => {
     setControlsVisible((prev) => !prev);
   };
 
-  const handleChapterSelect = (chapterId: string) => {
-      setCurrentChapterId(chapterId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Background style based on theme
   const bgClass = theme === 'dark' ? 'bg-[#1a1a1a]' : theme === 'sepia' ? 'bg-[#f4ecd8]' : 'bg-soft-paper';
 
   return (
     <div className={cn("min-h-screen transition-colors duration-300", bgClass)}>
-      <ReaderControls
-        isVisible={controlsVisible}
-        book={book}
-        onChapterSelect={handleChapterSelect}
-      />
-
-      {/* Click handler wrapper */}
-      <div onClick={handleTap} className="min-h-screen cursor-pointer pt-10">
-        <ReaderContent content={activeChapter?.content || "Content not found."} />
+      <ReaderControls isVisible={controlsVisible} book={book} />
+      <div onClick={handleTap} className="min-h-screen cursor-pointer">
+        {/* Render Active Chapter Content */}
+        <ReaderContent content={activeChapter?.content || "<p>Chapter not found.</p>"} />
       </div>
     </div>
   );
