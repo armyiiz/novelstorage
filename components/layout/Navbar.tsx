@@ -20,7 +20,7 @@ export function Navbar() {
       {/* Desktop Navigation (Top Bar) */}
       <nav className="hidden md:block fixed top-0 left-0 right-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-black/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 h-16">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-midnight-blue dark:text-white">
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-midnight-blue dark:text-white transition-opacity hover:opacity-80">
             <BookOpen className="h-6 w-6 text-bookmark-gold" />
             <span>NovelStorage</span>
           </Link>
@@ -31,7 +31,7 @@ export function Navbar() {
                 href={item.href}
                 className={cn(
                   "flex items-center gap-2 text-sm font-medium transition-colors hover:text-bookmark-gold",
-                  pathname === item.href ? "text-midnight-blue dark:text-white" : "text-slate-500 dark:text-slate-400"
+                  pathname === item.href ? "text-midnight-blue dark:text-white font-semibold" : "text-slate-500 dark:text-slate-400"
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -43,7 +43,7 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Navigation (Bottom Bar) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/90 pb-safe pt-2 backdrop-blur-lg dark:border-slate-800 dark:bg-black/90">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/90 pb-safe pt-2 backdrop-blur-lg dark:border-slate-800 dark:bg-black/90">
         <div className="flex items-center justify-around px-4 pb-4">
           {navItems.map((item) => (
             <Link

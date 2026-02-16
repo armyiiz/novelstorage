@@ -7,11 +7,12 @@ interface ReaderState {
   fontFamily: 'sans' | 'serif';
   theme: 'light' | 'dark' | 'sepia';
   currentChapterId: string | null;
+
   setFontSize: (size: number) => void;
   setLineHeight: (height: number) => void;
   setFontFamily: (family: 'sans' | 'serif') => void;
   setTheme: (theme: 'light' | 'dark' | 'sepia') => void;
-  setCurrentChapterId: (id: string) => void;
+  setCurrentChapterId: (id: string | null) => void;
 }
 
 export const useReaderStore = create<ReaderState>()(
@@ -19,9 +20,10 @@ export const useReaderStore = create<ReaderState>()(
     (set) => ({
       fontSize: 18,
       lineHeight: 1.6,
-      fontFamily: 'sans', // Matches Tailwind font-sans (Sarabun)
+      fontFamily: 'sans',
       theme: 'light',
       currentChapterId: null,
+
       setFontSize: (size) => set({ fontSize: size }),
       setLineHeight: (height) => set({ lineHeight: height }),
       setFontFamily: (family) => set({ fontFamily: family }),
